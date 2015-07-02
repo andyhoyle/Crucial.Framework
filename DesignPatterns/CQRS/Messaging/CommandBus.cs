@@ -19,6 +19,7 @@ namespace Crucial.Framework.DesignPatterns.CQRS.Messaging
         public async Task Send<T>(T command) where T : Command
         {
             var handler = _commandHandlerFactory.GetHandler<T>();
+
             if (handler != null)
             {
                 await handler.Execute(command).ConfigureAwait(false);
