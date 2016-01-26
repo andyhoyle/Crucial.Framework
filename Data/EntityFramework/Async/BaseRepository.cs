@@ -94,7 +94,7 @@ namespace Crucial.Framework.Data.EntityFramework.Async
             }
         }
 
-        public async Task<bool> Delete(TKey entity)
+        public async virtual Task<bool> Delete(TKey entity)
         {
             using (var context = _contextProvider.DbContext)
             {

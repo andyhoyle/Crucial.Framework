@@ -63,6 +63,11 @@ namespace Crucial.Framework.Testing.EF
         public void SetState<TEntity>(TEntity entityItem, EntityState state) where TEntity : Crucial.Framework.BaseEntities.ProviderEntityBase
         {
         }
+
+        public DbSet<TEntity> Set<TEntity>() where TEntity : class
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestDbSet<TEntity> : DbSet<TEntity>, IQueryable, IEnumerable<TEntity>, IDbAsyncEnumerable<TEntity>
