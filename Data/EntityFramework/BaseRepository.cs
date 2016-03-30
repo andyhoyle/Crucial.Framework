@@ -135,7 +135,7 @@ namespace Crucial.Framework.Data.EntityFramework
 
         public bool Update(TEntity entity)
         {
-            Context.Entry(entity).State = EntityState.Modified;
+            Context.Entry(entity).State = System.Data.Entity.EntityState.Modified;
 
             try
             {
@@ -145,7 +145,7 @@ namespace Crucial.Framework.Data.EntityFramework
             {
                 //CrucialLogger.LogException(ex);
 
-                Context.Entry(entity).State = EntityState.Unchanged;
+                Context.Entry(entity).State = System.Data.Entity.EntityState.Unchanged;
                 throw new Exception("EF Validation failed, see inner exception for details", ex);
             }
 

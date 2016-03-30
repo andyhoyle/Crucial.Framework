@@ -25,7 +25,7 @@ namespace Crucial.Framework.Testing.EF
             await Task.Run(() =>
             {
                 this.SaveChangesCount++;
-            }).ConfigureAwait(false);
+            });
 
             return 1;
         }

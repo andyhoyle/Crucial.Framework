@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +40,9 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async
         /// </code></example>
         [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support.")]
         Task<IEnumerable<T>> GetAsync(Func<System.Linq.IQueryable<T>, System.Linq.IQueryable<T>> queryShaper, CancellationToken cancellationToken);
+
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support.")]
+        Task<IEnumerable<T>> GetAsync(Func<System.Linq.IQueryable<T>, System.Linq.IQueryable<T>> queryShaper, CancellationToken cancellationToken, params Expression<Func<T, object>>[] include);
 
         /// <summary>
         /// Retrieves a query result asynchronously.

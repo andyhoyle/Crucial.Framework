@@ -44,12 +44,12 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<IEnumerable<T>> GetAsync<T>( this IReadOnlyRepository<T> repository, Func<IQueryable<T>, IQueryable<T>> queryShaper ) where T : class
+        public static async Task<IEnumerable<T>> GetAsync<T>( this IReadOnlyRepository<T> repository, Func<IQueryable<T>, IQueryable<T>> queryShaper ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Requires( queryShaper != null );
             Contract.Ensures( Contract.Result<Task<IEnumerable<T>>>() != null );
-            return repository.GetAsync( queryShaper, CancellationToken.None );
+            return await repository.GetAsync( queryShaper, CancellationToken.None );
         }
 
         /// <summary>
@@ -62,12 +62,12 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// <returns>A <see cref="Task{T}">task</see> containing the <typeparamref name="TResult">result</typeparamref> of the operation.</returns>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<TResult> GetAsync<T, TResult>( this IReadOnlyRepository<T> repository, Func<IQueryable<T>, TResult> queryShaper ) where T : class
+        public static async Task<TResult> GetAsync<T, TResult>( this IReadOnlyRepository<T> repository, Func<IQueryable<T>, TResult> queryShaper ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Requires( queryShaper != null );
             Contract.Ensures( Contract.Result<Task<TResult>>() != null );
-            return repository.GetAsync( queryShaper, CancellationToken.None );
+            return await repository.GetAsync( queryShaper, CancellationToken.None );
         }
 
         /// <summary>
@@ -97,11 +97,11 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<IEnumerable<T>> GetAllAsync<T>( this IReadOnlyRepository<T> repository ) where T : class
+        public static async Task<IEnumerable<T>> GetAllAsync<T>( this IReadOnlyRepository<T> repository ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Ensures( Contract.Result<Task<IEnumerable<T>>>() != null );
-            return repository.GetAsync( q => q, CancellationToken.None );
+            return await repository.GetAsync( q => q, CancellationToken.None );
         }
 
         /// <summary>
@@ -133,11 +133,11 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<IEnumerable<T>> GetAllAsync<T>( this IReadOnlyRepository<T> repository, CancellationToken cancellationToken ) where T : class
+        public static async Task<IEnumerable<T>> GetAllAsync<T>( this IReadOnlyRepository<T> repository, CancellationToken cancellationToken ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Ensures( Contract.Result<Task<IEnumerable<T>>>() != null );
-            return repository.GetAsync( q => q, cancellationToken );
+            return await repository.GetAsync( q => q, cancellationToken );
         }
 
         /// <summary>
@@ -168,12 +168,12 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<IEnumerable<T>> FindByAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate ) where T : class
+        public static async Task<IEnumerable<T>> FindByAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Requires( predicate != null );
             Contract.Ensures( Contract.Result<Task<IEnumerable<T>>>() != null );
-            return repository.GetAsync( q => q.Where( predicate ), CancellationToken.None );
+            return await repository.GetAsync( q => q.Where( predicate ), CancellationToken.None );
         }
 
         /// <summary>
@@ -206,12 +206,12 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<IEnumerable<T>> FindByAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken ) where T : class
+        public static async Task<IEnumerable<T>> FindByAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Requires( predicate != null );
             Contract.Ensures( Contract.Result<Task<IEnumerable<T>>>() != null );
-            return repository.GetAsync( q => q.Where( predicate ), cancellationToken );
+            return await repository.GetAsync( q => q.Where( predicate ), cancellationToken );
         }
 
         /// <summary>
@@ -242,14 +242,36 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
         /// </code></example>
         [SuppressMessage( "Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support." )]
         [SuppressMessage( "Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract." )]
-        public static Task<T> GetSingleAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate ) where T : class
+        public static async Task<T> GetSingleAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate ) where T : class
         {
             Contract.Requires( repository != null );
             Contract.Requires( predicate != null );
             Contract.Ensures( Contract.Result<Task<T>>() != null );
-            return repository.GetSingleAsync( predicate, CancellationToken.None );
+            return await repository.GetSingleAsync( predicate, CancellationToken.None );
         }
 
+        /// <summary>
+        /// params Expression<Func<TEntity, object>>[] include)
+        ///{
+        ///    IQueryable<TEntity> query = Context.Set<TEntity>();
+        ///    foreach (var inc in include)
+        ///        query = query.Include(inc);
+        ///    return query.Where(predicate);
+        ///}
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="repository"></param>
+    /// <param name="predicate"></param>
+    /// <returns></returns>
+
+    public static async Task<T> GetSingleAsync<T>( this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] include) where T : class
+        {
+            Contract.Requires( repository != null );
+            Contract.Requires( predicate != null );
+            Contract.Ensures( Contract.Result<Task<T>>() != null );
+            
+            return await repository.GetSingleAsync( predicate, CancellationToken.None );
+        }
         /// <summary>
         /// Retrieves a single item in the repository matching the specified predicate asynchronously.
         /// </summary>
@@ -285,6 +307,16 @@ namespace Crucial.Framework.DesignPatterns.Repository.Async.Extensions
             Contract.Requires( predicate != null );
             Contract.Ensures( Contract.Result<Task<T>>() != null );
             var items = await repository.GetAsync( q => q.Where( predicate ), cancellationToken );
+            return items.SingleOrDefault();
+        }
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures", Justification = "Required for generics support.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0", Justification = "Validated by a code contract.")]
+        public static async Task<T> GetSingleAsync<T>(this IReadOnlyRepository<T> repository, Expression<Func<T, bool>> predicate, CancellationToken cancellationToken, params Expression<Func<T, object>>[] include) where T : class
+        {
+            Contract.Requires(repository != null);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<Task<T>>() != null);
+            var items = await repository.GetAsync(q => q.Where(predicate), cancellationToken, include);
             return items.SingleOrDefault();
         }
 

@@ -5,15 +5,8 @@ using System.Text;
 using System.Data;
 using System.Data.Entity;
 using System.Linq.Expressions;
-using Crucial.Framework.Extensions;
-using Crucial.Framework.Enums;
-using System.Data.Entity.Validation;
-using System.Data.Entity.Infrastructure;
 using System.Threading.Tasks;
 using System.Threading;
-using Crucial.Framework.Data.EntityFramework;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Remoting.Contexts;
 using Crucial.Framework.Logging;
 
 namespace Crucial.Framework.Data.EntityFramework.Async
@@ -39,37 +32,50 @@ namespace Crucial.Framework.Data.EntityFramework.Async
 
         public async Task<IEnumerable<TEntity>> GetAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> queryShaper, CancellationToken cancellationToken)
         {
-            using (var context = _contextProvider.DbContext)
-            {
-                var query = queryShaper(context.Set<TEntity>());
-                return await query.ToListAsync(cancellationToken).ConfigureAwait(false);   
-            }
+            //using (var context = _contextProvider.DbContext)
+            //{
+                var query = queryShaper(_contextProvider.DbContext.Set<TEntity>());
+                return await query.ToListAsync(cancellationToken);   
+            //}
         }
 
+        ///params Expression<Func<TEntity, object>>[] include)
+        ///{
+        ///    IQueryable<TEntity> query = Context.Set<TEntity>();
+        ///    foreach (var inc in include)
+        ///        query = query.Include(inc);
+        ///    return query.Where(predicate);
+
+        public async Task<IEnumerable<TEntity>> GetAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> queryShaper, CancellationToken cancellationToken, params Expression<Func<TEntity, object>>[] include)
+        {
+            //using (var context = _contextProvider.DbContext)
+            //{
+                var query = queryShaper(_contextProvider.DbContext.Set<TEntity>());
+                include.Select(_ => query.Include(_));
+                return await query.ToListAsync(cancellationToken);   
+            //}
+        }
 
         public async Task<TResult> GetAsync<TResult>(Func<IQueryable<TEntity>, TResult> queryShaper, CancellationToken cancellationToken)
         {
             var factory = Task<TResult>.Factory;
 
-            using (var context = _contextProvider.DbContext)
-            {
-                return
-                    await
-                        factory.StartNew(() => queryShaper(context.Set<TEntity>()), cancellationToken)
-                            .ConfigureAwait(false);
-            }
+            //using (var context = _contextProvider.DbContext)
+            //{
+                return await factory.StartNew(() => queryShaper(_contextProvider.DbContext.Set<TEntity>()), cancellationToken);
+            //}
         }
 
         public async Task<TKey> Create(TEntity entity)
         {
-            using (var context = _contextProvider.DbContext)
-            {
-                var output = context.Set<TEntity>();
+            //using (var context = _contextProvider.DbContext)
+            //{
+                var output = _contextProvider.DbContext.Set<TEntity>();
                 TEntity result = output.Add(entity);
 
                 try
                 {
-                    await context.SaveChangesAsync().ConfigureAwait(false);
+                    await _contextProvider.DbContext.SaveChangesAsync();
                 }
                 catch (System.Data.Entity.Infrastructure.DbUpdateException ex)
                 {
@@ -91,19 +97,21 @@ namespace Crucial.Framework.Data.EntityFramework.Async
                 }
 
                 return result as TKey;
-            }
+            //}
         }
+
+       
 
         public async virtual Task<bool> Delete(TKey entity)
         {
-            using (var context = _contextProvider.DbContext)
-            {
-                context.Set<TKey>().Attach(entity);
-                context.Entry(entity).State = EntityState.Deleted;
+            //using (var context = _contextProvider.DbContext)
+            //{
+                _contextProvider.DbContext.Set<TKey>().Attach(entity);
+                _contextProvider.DbContext.Entry(entity).State = System.Data.Entity.EntityState.Deleted;
 
                 try
                 {
-                    await context.SaveChangesAsync().ConfigureAwait(false);
+                    await _contextProvider.DbContext.SaveChangesAsync();
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException ex)
                 {
@@ -112,29 +120,29 @@ namespace Crucial.Framework.Data.EntityFramework.Async
                 }
 
                 return true;
-            }
+            //}
         }
 
         public async Task<bool> Update(TEntity entity)
         {
-            using (var context = _contextProvider.DbContext)
-            {
-                context.Entry(entity).State = EntityState.Modified;
+            //using (var context = _contextProvider.DbContext)
+            //{
+                _contextProvider.DbContext.Entry(entity).State = System.Data.Entity.EntityState.Modified;
 
                 try
                 {
-                    await context.SaveChangesAsync().ConfigureAwait(false);
+                    await _contextProvider.DbContext.SaveChangesAsync();
                 }
                 catch (System.Data.Entity.Validation.DbEntityValidationException ex)
                 {
                     _logger.LogException(ex);
 
-                    context.Entry(entity).State = EntityState.Unchanged;
+                    _contextProvider.DbContext.Entry(entity).State = System.Data.Entity.EntityState.Unchanged;
                     throw;
                 }
 
                 return true;
-            }
+            //}
         }
     }
 }
