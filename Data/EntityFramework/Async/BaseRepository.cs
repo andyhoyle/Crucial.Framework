@@ -15,15 +15,13 @@ namespace Crucial.Framework.Data.EntityFramework.Async
     /// Represents a repository of items.
     /// </summary>
     /// <typeparam name="T">The <see cref="Type">type</see> of item in the repository.</typeparam>
-    public abstract class BaseRepository<TContext, TEntity, TKey> : Crucial.Framework.DesignPatterns.Repository.Async.IReadOnlyRepository<TEntity>
-            where TContext : IDbContextAsync
+    public class BaseRepository<TEntity> : Crucial.Framework.DesignPatterns.Repository.Async.IGenericRepository<TEntity>
             where TEntity : Crucial.Framework.BaseEntities.ProviderEntityBase
-            where TKey : Crucial.Framework.BaseEntities.ProviderEntityBase
     {
         private ILogger _logger;
-        private readonly IContextProvider<TContext> _contextProvider;
+        private readonly IContextProvider<IDbContextAsync> _contextProvider;
 
-        protected BaseRepository(IContextProvider<TContext> contextProvider, ILogger logger)
+        public BaseRepository(IContextProvider<IDbContextAsync> contextProvider, ILogger logger)
         {
             _contextProvider = contextProvider;
             _logger = logger;
@@ -48,7 +46,7 @@ namespace Crucial.Framework.Data.EntityFramework.Async
             return await factory.StartNew(() => queryShaper(_contextProvider.DbContext.Set<TEntity>()), cancellationToken);
         }
 
-        public async Task<TKey> Create(TEntity entity)
+        public async Task<TEntity> Create(TEntity entity)
         {
             var output = _contextProvider.DbContext.Set<TEntity>();
             TEntity result = output.Add(entity);
@@ -76,14 +74,12 @@ namespace Crucial.Framework.Data.EntityFramework.Async
                 throw;
             }
 
-            return result as TKey;
+            return result as TEntity;
         }
 
-       
-
-        public async virtual Task<bool> Delete(TKey entity)
+        public async virtual Task<bool> Delete(TEntity entity)
         {
-            _contextProvider.DbContext.Set<TKey>().Attach(entity);
+            _contextProvider.DbContext.Set<TEntity>().Attach(entity);
             _contextProvider.DbContext.Entry(entity).State = System.Data.Entity.EntityState.Deleted;
 
             try
@@ -98,7 +94,7 @@ namespace Crucial.Framework.Data.EntityFramework.Async
 
             return true;
         }
-
+        
         public async Task<bool> Update(TEntity entity)
         {
             _contextProvider.DbContext.Entry(entity).State = System.Data.Entity.EntityState.Modified;

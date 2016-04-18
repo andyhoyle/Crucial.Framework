@@ -171,6 +171,7 @@
     <Compile Include="DesignPatterns\Repository\Async\Extensions\IQueryable.cs" />
     <Compile Include="DesignPatterns\Repository\Async\ICreateRepository.cs" />
     <Compile Include="DesignPatterns\Repository\Async\IDeleteRepository.cs" />
+    <Compile Include="DesignPatterns\Repository\Async\IGenericRepository.cs" />
     <Compile Include="DesignPatterns\Repository\Async\IReadOnlyRepository.cs" />
     <Compile Include="DesignPatterns\Repository\Async\IUpdateRepository.cs" />
     <Compile Include="Entities\CqrsViewModel.cs" />
