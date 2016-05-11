@@ -189,6 +189,7 @@
     <Compile Include="DesignPatterns\Repository\IUpdateRepository.cs" />
     <Compile Include="Enums\SortOrder.cs" />
     <Compile Include="Extensions\IQueryable.cs" />
+    <Compile Include="Extensions\Linq.cs" />
     <Compile Include="Interceptors\PerformanceInterceptor.cs" />
     <Compile Include="IoC\IAutoRegister.cs" />
     <Compile Include="IoC\StructureMap\DependencyResolver.cs" />
