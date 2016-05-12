@@ -17,4 +17,14 @@ namespace Crucial.Framework.Extensions
             return instance.Select((item, index) => { return (index == (instanceCount - 1)) || isAdjacentFunc(selector.Invoke(item), selector.Invoke(instance.ElementAt(index + 1))); }).All(b => b);
         }
     }
+    
+    public static TOutput Calculate<T, TResult, TOutput>(
+            this IEnumerable<T> instance,
+            Func<T, TResult> selector,
+            Func<IEnumerable<T>, Func<T, TResult>, TResult> firstSelector,
+            Func<IEnumerable<T>, Func<T, TResult>, TResult> lastSelector,
+            Func<TResult, TResult, TOutput> outputFunc)
+        {
+            return outputFunc.Invoke(firstSelector.Invoke(instance, selector.Invoke), lastSelector.Invoke(instance, selector.Invoke));
+        }
 }
