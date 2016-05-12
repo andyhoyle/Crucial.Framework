@@ -13,7 +13,8 @@ namespace Crucial.Framework.Extensions
             Func<T, TResult> selector,
             Func<TResult, TResult, bool> isAdjacentFunc)
         {
-            return instance.Select((item, index) => { return (index == (instance.Count() - 1)) || isAdjacentFunc(selector.Invoke(item), selector.Invoke(instance.ElementAt(index + 1))); }).All(b => b);
+            var instanceCount = instance.Count();
+            return instance.Select((item, index) => { return (index == (instanceCount - 1)) || isAdjacentFunc(selector.Invoke(item), selector.Invoke(instance.ElementAt(index + 1))); }).All(b => b);
         }
     }
 }
