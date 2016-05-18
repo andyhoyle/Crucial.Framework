@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Web;
 using NLog;
@@ -7,7 +6,12 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using System.Net;
 using System.Text;
-using NLog.Config;
+using System.Web.Http.Filters;
+using System.Web.Http.Tracing;
+using System.Net.Http;
+using System.Diagnostics;
+using System.Linq;
+using Crucial.Framework.Logging.Exceptions;
 
 namespace Crucial.Framework.Logging
 {
@@ -31,6 +35,11 @@ namespace Crucial.Framework.Logging
             {
                 Error(message, exception);
             }
+        }
+
+        internal void LogException(HttpActionExecutedContext context)
+        {
+            Fatal("Controller : " + context.ActionContext.ControllerContext.ControllerDescriptor.ControllerType.FullName + Environment.NewLine + "Action : " + context.ActionContext.ActionDescriptor.ActionName, context.Exception, context.Request);
         }
 
         public void LogException(string message, Exception exception, HttpRequest httpRequest, ExceptionType exceptionType = ExceptionType.Handled)
@@ -398,7 +407,7 @@ namespace Crucial.Framework.Logging
         {
             //Trace("CallingAssemblyVersion Start");
 
-            Stopwatch stopwatch = new Stopwatch();
+            //Stopwatch stopwatch = new Stopwatch();
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetCallingAssembly().Location);
             //Trace(string.Format("CallingAssemblyVersion Ended - {0}.{1} Seconds",  stopwatch.Elapsed.Seconds, stopwatch.Elapsed.Milliseconds));
 

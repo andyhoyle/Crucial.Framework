@@ -32,15 +32,15 @@ namespace Crucial.Framework.Data.EntityFramework
             Framework.DesignPatterns.Repository.IDeleteRepository<TKey>,
             Framework.DesignPatterns.Repository.IUpdateRepository<TEntity>,
             Framework.DesignPatterns.Repository.IQueryableRepository<TEntity>
-        where TContext : IDbContext
+        where TContext : IDbContextAsync
         where TEntity : Crucial.Framework.BaseEntities.ProviderEntityBase
         where TKey : Crucial.Framework.BaseEntities.ProviderEntityBase
     {
         protected TContext Context;
 
-        public BaseRepository()
+        public BaseRepository(IContextProvider<TContext> provider)
         {
-            Context = new ContextProvider<TContext>().DbContext;
+            Context = provider.DbContext;
         }
 
         public virtual IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] include)
