@@ -45,16 +45,16 @@ namespace Crucial.Framework.Security
         public const int HASH_BYTE_SIZE = 24;
         public const int PBKDF2_ITERATIONS = 1000;
 
-        public const int ITERATION_INDEX = 0;
-        public const int SALT_INDEX = 1;
-        public const int PBKDF2_INDEX = 2;
-              
+        //public const int ITERATION_INDEX = 0;
+        public const int SALT_INDEX = 0;
+        public const int PBKDF2_INDEX = 1;
+
         /// <summary>
         /// Creates a salted PBKDF2 hash of the password.
         /// </summary>
         /// <param name="password">The password to hash.</param>
         /// <returns>The hash of the password.</returns>
-        public static string CreateHash(string password)
+        public static Tuple<string, string> CreateUnsaltedHash(string password)
         {
             // Generate a random salt
             RNGCryptoServiceProvider csprng = new RNGCryptoServiceProvider();
@@ -63,9 +63,24 @@ namespace Crucial.Framework.Security
 
             // Hash the password and encode the parameters
             byte[] hash = PBKDF2(password, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
-            return PBKDF2_ITERATIONS + ":" +
-                Convert.ToBase64String(salt) + ":" +
-                Convert.ToBase64String(hash);
+            return Tuple.Create(Convert.ToBase64String(salt), Convert.ToBase64String(hash));
+        }
+
+        /// <summary>
+        /// Creates a salted PBKDF2 hash of the password.
+        /// </summary>
+        /// <param name="password">The password to hash.</param>
+        /// <returns>The hash of the password.</returns>
+        public static Tuple<string,string> CreateHash(string password)
+        {
+            // Generate a random salt
+            RNGCryptoServiceProvider csprng = new RNGCryptoServiceProvider();
+            byte[] salt = new byte[SALT_BYTE_SIZE];
+            csprng.GetBytes(salt);
+
+            // Hash the password and encode the parameters
+            byte[] hash = PBKDF2(password, salt, PBKDF2_ITERATIONS, HASH_BYTE_SIZE);
+            return Tuple.Create(Convert.ToBase64String(salt), Convert.ToBase64String(hash));
         }
 
         /// <summary>
@@ -79,7 +94,7 @@ namespace Crucial.Framework.Security
             // Extract the parameters from the hash
             char[] delimiter = { ':' };
             string[] split = correctHash.Split(delimiter);
-            int iterations = Int32.Parse(split[ITERATION_INDEX]);
+            int iterations = PBKDF2_ITERATIONS;//Int32.Parse(split[ITERATION_INDEX]);
             byte[] salt = Convert.FromBase64String(split[SALT_INDEX]);
             byte[] hash = Convert.FromBase64String(split[PBKDF2_INDEX]);
 
